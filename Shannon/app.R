@@ -20,7 +20,7 @@ ui <- fluidPage(
          sliderInput("num_comm",
                      "Number of communities:",
                      min = 10,
-                     max = 500,
+                     max = 300,
                      value = 100)
       ),
       
