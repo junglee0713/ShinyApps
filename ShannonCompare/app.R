@@ -20,7 +20,7 @@ ui <- shinyUI(pageWithSidebar(
     
     mainPanel(
         h4('You entered'),
-        verbatimTextOutput("oid1"),
+        #verbatimTextOutput("oid1"),
         verbatimTextOutput("oid2"),
         verbatimTextOutput("oid3"),
         h4('Shannon Diversity Comparison'),
