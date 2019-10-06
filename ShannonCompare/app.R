@@ -49,13 +49,15 @@ server <- shinyServer(function(input, output) {
         x <- x[x>0]
         y <- x/sum(x)
         cat("As proportions (zeros, if any, are excluded):\n")
-        print(y)
+        print(round(y, 3))
     }
     )
     
     output$shannonPlot <- renderPlot({
         library(tidyverse)
         library(ggsci)
+        library(ggrepel)
+        # x <- c(11, 15, 20, 8, 23, 1, 34, 12, 13, 54)
         x <- as.numeric(unlist(strsplit(input$inputCount,",")))
         x <- x[x>0]
         y <- x/sum(x)
@@ -97,9 +99,25 @@ server <- shinyServer(function(input, output) {
         
         g <- df %>% 
             ggplot(aes(numSpecies, shannon)) +
+            geom_segment(aes(x = 0,
+                             xend = length(y), 
+                             y = df$shannon[df$domProp == "User input"],
+                             yend = df$shannon[df$domProp == "User input"]),
+                             color = "red",
+                             lty = "dashed") +
+            geom_segment(aes(x = length(y), 
+                             xend = length(y), 
+                             y = -Inf, 
+                             yend = df$shannon[df$domProp == "User input"]),
+                         color = "red",
+                         lty = "dashed") +
             geom_point(aes(color = domProp)) +
+            geom_text_repel(data = df %>% filter(domProp == "User input"),
+                            aes(label = round(shannon, 2)),
+                            segment.color = "grey50",
+                            vjust = 1) +
             scale_color_d3() +
-            scale_x_continuous(trans = "log2", breaks = 2^(2:speciesMac)) +
+            scale_x_continuous(trans = "log2", breaks = c(2^(2:speciesMac), length(y))) +
             labs(x = "# of distinct species",
                  y = "Shannon diversity index",
                  color = "Proportion of\nmost dominant species\n(rest evenly distributed)") +
